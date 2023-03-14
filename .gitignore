@@ -26,4 +26,3 @@ dist-ssr
 # Custom ignores
 package-lock.json
 .firebase
-storybook-static
