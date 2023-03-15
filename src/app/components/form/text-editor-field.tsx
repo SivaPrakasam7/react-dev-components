@@ -6,15 +6,30 @@ import * as Formik from "formik";
 import * as Mui from "@mui/material";
 import * as MuiIcons from "@mui/icons-material";
 
-export const RichTextEditor = ({
+export const TextEditorField = (
+  props: Mui.AutocompleteProps<any, boolean, boolean, boolean> &
+    TextEditorFieldProps &
+    Pick<Mui.TextFieldProps, "name" | "label"> &
+    Pick<Mui.BoxProps, "height" | "width"> & {
+      toolbar?: object | undefined;
+    }
+) => <Formik.Field component={MuiTextEditorField} {...props} />;
+
+const MuiTextEditorField = ({
   name,
   label,
   toolbar,
-}: RichTextEditorProps &
-  Mui.TextFieldProps & { toolbar?: object | undefined }) => {
-  const { values, errors, touched, setFieldValue } = Formik.useFormikContext<{
-    [key: string]: string;
-  }>();
+  height,
+  width,
+}: TextEditorFieldProps &
+  Pick<Mui.TextFieldProps, "name" | "label"> &
+  Pick<Mui.BoxProps, "height" | "width"> & {
+    toolbar?: object | undefined;
+  }) => {
+  const { values, errors, touched, setFieldValue } =
+    Formik.useFormikContext<{
+      [key: string]: string;
+    }>();
   const [editorState, setEditorState] = React.useState(() =>
     EditorState.createEmpty()
   );
@@ -39,7 +54,7 @@ export const RichTextEditor = ({
   }, [values[name]]);
 
   return (
-    <Mui.Stack spacing={1}>
+    <Mui.Stack spacing={1} sx={{ width, height }}>
       <Mui.Typography
         component={Mui.FormLabel}
         color={error ? "error" : undefined}
@@ -48,6 +63,8 @@ export const RichTextEditor = ({
       </Mui.Typography>
       <Mui.Box
         sx={{
+          width,
+          height,
           borderRadius: 1,
           border: (theme) =>
             error
@@ -66,6 +83,14 @@ export const RichTextEditor = ({
           wrapperClassName="wrapperClassName"
           editorClassName="editorClassName"
           onEditorStateChange={handleChange}
+          editorStyle={{
+            height: "90%",
+            width: "100%",
+          }}
+          wrapperStyle={{
+            overflow: "hidden",
+            height: height as string | number,
+          }}
           toolbar={{
             options: [
               "inline",
@@ -93,6 +118,7 @@ export const RichTextEditor = ({
                 "Verdana",
               ],
             },
+            ...toolbar,
           }}
           toolbarStyle={{
             boxShadow: "0px 1px 5px -5px black",
@@ -116,7 +142,7 @@ export const RichTextEditor = ({
   );
 };
 
-interface RichTextEditorProps {
+interface TextEditorFieldProps {
   name: string;
   label?: string;
 }
