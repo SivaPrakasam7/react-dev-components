@@ -14,13 +14,6 @@ module.exports = {
   framework: "@storybook/react",
   features: {
     storyStoreV7: true,
-  },
-  webpackFinal: async (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      src: path.resolve(__dirname, "../src"),
-    };
-
-    return config;
+    previewMdx2: true,
   },
 };
