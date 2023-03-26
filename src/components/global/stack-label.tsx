@@ -1,6 +1,7 @@
 import * as Mui from "@mui/material";
 import React from "react";
-import * as Src from "src";
+import { Format } from "./formater";
+import { useUtils } from "../../hooks/utils/use-utils";
 
 export const StackLabel = ({
   direction,
@@ -13,7 +14,7 @@ export const StackLabel = ({
   valBold,
   time,
 }: stack.Props) => {
-  const { formatTimeString } = Src.Hooks.Utils.useUtils();
+  const { formatTimeString } = useUtils();
   return (
     <Mui.Stack
       direction={direction || "column"}
@@ -41,10 +42,7 @@ export const StackLabel = ({
         ) : node ? (
           label
         ) : (
-          <Src.Components.Global.Format
-            number={label as string}
-            type="number"
-          />
+          <Format number={label as string} type="number" />
         )}
       </Mui.Typography>
     </Mui.Stack>

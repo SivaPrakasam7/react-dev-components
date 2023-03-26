@@ -3,7 +3,7 @@ import * as Mui from "@mui/material";
 import * as MuiIcons from "@mui/icons-material";
 import React from "react";
 import * as NumberFormat from "react-number-format";
-import * as Src from "src";
+import { FieldLabel } from "./field-label";
 
 export const FormField = (
   props: Mui.TextFieldProps & {
@@ -32,10 +32,7 @@ const MuiTextField = ({
 }: Formik.FieldProps & Mui.TextFieldProps & { individualLabel?: boolean }) => {
   const error = Boolean(errors[field.name] && touched[field.name]);
   return (
-    <Src.Components.Form.FieldLabel
-      error={error}
-      label={individualLabel ? label : ""}
-    >
+    <FieldLabel error={error} label={individualLabel ? label : ""}>
       <Mui.TextField
         fullWidth
         error={error}
@@ -49,7 +46,7 @@ const MuiTextField = ({
         onBlur={handleBlur}
         value={values[field.name]}
       />
-    </Src.Components.Form.FieldLabel>
+    </FieldLabel>
   );
 };
 
@@ -65,10 +62,7 @@ const MuiPasswordField = ({
   const [visible, setVisible] = React.useState(false);
   const handleVisible = () => setVisible(!visible);
   return (
-    <Src.Components.Form.FieldLabel
-      error={error}
-      label={individualLabel ? label : ""}
-    >
+    <FieldLabel error={error} label={individualLabel ? label : ""}>
       <Mui.TextField
         fullWidth
         type={visible ? "text" : type}
@@ -98,7 +92,7 @@ const MuiPasswordField = ({
         onBlur={handleBlur}
         value={values[field.name]}
       />
-    </Src.Components.Form.FieldLabel>
+    </FieldLabel>
   );
 };
 
@@ -115,10 +109,7 @@ const MuiNumberField = ({
 }: Formik.FieldProps & Mui.TextFieldProps & { individualLabel?: boolean }) => {
   const error = Boolean(errors[field.name] && touched[field.name]);
   return (
-    <Src.Components.Form.FieldLabel
-      error={error}
-      label={individualLabel ? label : ""}
-    >
+    <FieldLabel error={error} label={individualLabel ? label : ""}>
       <Mui.TextField
         fullWidth
         error={error}
@@ -137,7 +128,7 @@ const MuiNumberField = ({
           ...InputProps,
         }}
       />
-    </Src.Components.Form.FieldLabel>
+    </FieldLabel>
   );
 };
 

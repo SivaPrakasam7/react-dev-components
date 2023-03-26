@@ -2,7 +2,9 @@ import React from "react";
 import * as Mui from "@mui/material";
 import * as MuiIcons from "@mui/icons-material";
 import * as Formik from "formik";
-import * as Src from "src";
+import { FieldLabel } from "./field-label";
+import { ImageCropper } from "../global/image-cropper";
+import { useUtils } from "../../hooks/utils/use-utils";
 
 export const ImageField = React.memo(
   ({
@@ -19,7 +21,7 @@ export const ImageField = React.memo(
   }: imageCropper.Props & Mui.CardMediaProps) => {
     const theme = Mui.useTheme();
     const maxImageLength = 4;
-    const { useDataURLFile, byteFormat } = Src.Hooks.Utils.useUtils();
+    const { useDataURLFile, byteFormat } = useUtils();
     const [imageSrc, setImageSrc] = React.useState<any>(null);
     const {
       setFieldValue,
@@ -123,7 +125,7 @@ export const ImageField = React.memo(
     const onCancel = React.useCallback(() => setImageSrc(""), [name]);
 
     return (
-      <Src.Components.Form.FieldLabel error={error} label={label}>
+      <FieldLabel error={error} label={label}>
         <Mui.Stack
           spacing={2}
           alignItems="flex-start"
@@ -300,7 +302,7 @@ export const ImageField = React.memo(
             }}
           />
         </Mui.Stack>
-        <Src.Components.Global.ImageCropper
+        <ImageCropper
           key={name}
           imageSrc={imageSrc}
           save={onSave}
@@ -308,7 +310,7 @@ export const ImageField = React.memo(
           width={enableAvatar ? 200 : (width as number)}
           height={enableAvatar ? 200 : (height as number)}
         />
-      </Src.Components.Form.FieldLabel>
+      </FieldLabel>
     );
   }
 );
@@ -319,7 +321,7 @@ const ShowImage = ({
   avatar = false,
 }: Mui.CardMediaProps & { imageSrc: File; avatar?: boolean }) => {
   const [image, setImage] = React.useState<string>("");
-  const { toBase64 } = Src.Hooks.Utils.useUtils();
+  const { toBase64 } = useUtils();
 
   React.useEffect(() => {
     toBase64(imageSrc).then((res) => setImage(res as string));

@@ -3,22 +3,18 @@ import { createBasicConfig } from "@open-wc/building-rollup";
 import resolve from "@rollup/plugin-node-resolve";
 import typescript from "@rollup/plugin-typescript";
 import commonjs from "@rollup/plugin-commonjs";
-import * as react from "react";
+import pkg from "./package.json" assert { type: "json" };
 
+const pkgdependencies = Object.keys(pkg.dependencies || {});
 const baseConfig = createBasicConfig();
+const extensions = [".js", ".ts", ".jsx", ".tsx"];
 
 export default merge(baseConfig, {
   input: "src/index.ts",
-  output: {
-    dir: "dist",
-  },
   plugins: [
-    resolve({ extensions: [".js", ".ts"] }),
+    resolve({ extensions }),
     typescript({ tsconfig: "./tsconfig.json" }),
-    commonjs({
-      namedExports: {
-        react: Object.keys(react),
-      },
-    }),
+    commonjs(),
   ],
+  external: (id) => pkgdependencies.includes(id),
 });

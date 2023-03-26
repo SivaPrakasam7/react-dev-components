@@ -1,7 +1,8 @@
 import * as Mui from "@mui/material";
 import * as MuiIcons from "@mui/icons-material";
 import React from "react";
-import * as Src from "src";
+import { StackLabel } from "./stack-label";
+import { useUtils } from "../../hooks/utils/use-utils";
 
 export const ResponsiveTable = ({
   titles,
@@ -17,7 +18,7 @@ export const ResponsiveTable = ({
   enableCSVexport = false,
   enablePDFexport = false,
 }: responsiveTable.Props & Pick<Mui.TableProps, "size">) => {
-  const { downloadPDF, toCSVFile } = Src.Hooks.Utils.useUtils();
+  const { downloadPDF, toCSVFile } = useUtils();
   const [page, setPage] = React.useState(1);
   const handlePageChange = (e: React.ChangeEvent<unknown>, value: number) => {
     if (setPageNo) setPageNo(value);
@@ -230,7 +231,7 @@ export const ResponsiveTable = ({
 };
 
 export const TableData = ({ node, ...props }: responsiveTable.Data) => {
-  const { formatTimeString } = Src.Hooks.Utils.useUtils();
+  const { formatTimeString } = useUtils();
   const [open, close] = React.useState(false);
   return (
     <>
@@ -293,7 +294,7 @@ const CardView = ({
             xs={a.length % 2 && a.length === i + 1 ? 12 : 6}
           >
             {key === "date" ? (
-              <Src.Components.Global.StackLabel
+              <StackLabel
                 medium
                 title={titles[i]}
                 label={value as string}
@@ -304,12 +305,7 @@ const CardView = ({
             ) : key === "coin" ? (
               <Mui.Typography variant="body1">{value}</Mui.Typography>
             ) : (
-              <Src.Components.Global.StackLabel
-                medium
-                title={titles[i]}
-                label={value}
-                node
-              />
+              <StackLabel medium title={titles[i]} label={value} node />
             )}
           </Mui.Grid>
         ))}

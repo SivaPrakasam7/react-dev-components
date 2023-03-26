@@ -1,6 +1,6 @@
 import * as Formik from "formik";
 import * as Mui from "@mui/material";
-import * as Src from "src";
+import { FieldLabel } from "./field-label";
 
 export const SelectField = (
   props: Mui.SelectProps & {
@@ -21,10 +21,7 @@ const MuiSelectField = ({
   }) => {
   const error = Boolean(errors[field.name] && touched[field.name]);
   return (
-    <Src.Components.Form.FieldLabel
-      error={error}
-      label={individualLabel ? label : ""}
-    >
+    <FieldLabel error={error} label={individualLabel ? label : ""}>
       <Mui.FormControl>
         <Mui.InputLabel id={`${field.name}-label`}>
           {individualLabel ? "" : label}
@@ -58,6 +55,6 @@ const MuiSelectField = ({
           <>{error && errors[field.name]}</>
         </Mui.FormHelperText>
       </Mui.FormControl>
-    </Src.Components.Form.FieldLabel>
+    </FieldLabel>
   );
 };

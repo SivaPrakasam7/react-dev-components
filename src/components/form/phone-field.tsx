@@ -2,7 +2,8 @@ import * as Formik from "formik";
 import * as NumberFormat from "react-number-format";
 import * as Mui from "@mui/material";
 import React from "react";
-import * as Src from "src";
+import { FieldLabel } from "./field-label";
+import { COUNTRY_FLAG_CODE } from "../../constants/country-num-flag-code";
 
 export const PhoneNumberField = (
   props: Mui.AutocompleteProps<any, boolean, boolean, boolean> &
@@ -25,15 +26,19 @@ const MuiPhoneNumberField = ({
     defaultCountry?: "IN";
   }) => {
   const [countryCode, setCountryCode] = React.useState<string>(
-    Src.Constants.COUNTRY_FLAG_CODE.find(({ dial_code }) =>
+    COUNTRY_FLAG_CODE.find(({ dial_code }) =>
       values[field.name]?.includes(dial_code)
     )?.dial_code || "+91"
   );
   const error = Boolean(errors[field.name] && touched[field.name]);
 
-  const handleCountryCodeChange = (_: any, newValue: {
-    flag: any; dial_code: string 
-}) => {
+  const handleCountryCodeChange = (
+    _: any,
+    newValue: {
+      flag: any;
+      dial_code: string;
+    }
+  ) => {
     setCountryCode((prev) => {
       setFieldValue(
         field.name,
@@ -49,23 +54,20 @@ const MuiPhoneNumberField = ({
   React.useEffect(() => {
     if (
       !Boolean(
-        Src.Constants.COUNTRY_FLAG_CODE.find(({ dial_code }) =>
+        COUNTRY_FLAG_CODE.find(({ dial_code }) =>
           values[field.name]?.includes(dial_code)
         )?.dial_code
       )
     ) {
       setCountryCode(
-        Src.Constants.COUNTRY_FLAG_CODE.find(({ code }) => code === defaultCountry)
+        COUNTRY_FLAG_CODE.find(({ code }) => code === defaultCountry)
           ?.dial_code || "+91"
       );
     }
   }, []);
 
   return (
-    <Src.Components.Form.FieldLabel
-      error={error}
-      label={individualLabel ? label : ""}
-    >
+    <FieldLabel error={error} label={individualLabel ? label : ""}>
       <Mui.TextField
         fullWidth
         placeholder="0987654321"
@@ -82,11 +84,11 @@ const MuiPhoneNumberField = ({
                 disableClearable
                 disabled={isSubmitting || disabled}
                 onChange={handleCountryCodeChange}
-                value={Src.Constants.COUNTRY_FLAG_CODE.find(
+                value={COUNTRY_FLAG_CODE.find(
                   ({ dial_code }) => dial_code === countryCode
                 )}
                 autoHighlight
-                options={Src.Constants.COUNTRY_FLAG_CODE}
+                options={COUNTRY_FLAG_CODE}
                 getOptionLabel={(option) =>
                   `${option.flag} ${option.dial_code}`
                 }
@@ -139,7 +141,7 @@ const MuiPhoneNumberField = ({
         value={values[field.name]?.replace(countryCode, "")?.trim()}
         onChange={handleChange}
       />
-    </Src.Components.Form.FieldLabel>
+    </FieldLabel>
   );
 };
 

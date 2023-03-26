@@ -1,6 +1,6 @@
 import * as Formik from "formik";
 import * as Mui from "@mui/material";
-import * as Src from "src";
+import { FieldLabel } from "./field-label";
 
 export const AutoCompleteField = (
   props: Mui.AutocompleteProps<any, boolean, boolean, boolean> &
@@ -27,10 +27,7 @@ const MuiAutoComplete = ({
   };
 
   return (
-    <Src.Components.Form.FieldLabel
-      error={error}
-      label={individualLabel ? label : ""}
-    >
+    <FieldLabel error={error} label={individualLabel ? label : ""}>
       <Mui.Autocomplete
         size="small"
         fullWidth
@@ -70,6 +67,6 @@ const MuiAutoComplete = ({
           },
         }}
       />
-    </Src.Components.Form.FieldLabel>
+    </FieldLabel>
   );
 };
