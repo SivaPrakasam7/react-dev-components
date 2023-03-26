@@ -1,5 +1,5 @@
 import { ComponentStory } from "@storybook/react";
-import * as Src from "src";
+import * as Src from "../../../src";
 
 export default {
   title: "Global/Stack Label",

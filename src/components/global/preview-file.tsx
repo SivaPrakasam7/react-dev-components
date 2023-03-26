@@ -1,7 +1,7 @@
 import * as Mui from "@mui/material";
 import * as MuiIcons from "@mui/icons-material";
 import React from "react";
-import * as Src from "src";
+import { useUtils } from "../../hooks/utils/use-utils";
 
 export const PreviewFile = ({
   name,
@@ -16,8 +16,7 @@ export const PreviewFile = ({
   );
   const [imageSrc, setImageSrc] = React.useState<File>();
   const [image, setImage] = React.useState("");
-  const { toBase64, toText, toCSVJson, byteFormat } =
-    Src.Hooks.Utils.useUtils();
+  const { toBase64, toText, toCSVJson, byteFormat } = useUtils();
 
   const handleOnChange = React.useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
