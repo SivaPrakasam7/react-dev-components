@@ -1,7 +1,7 @@
+import * as Formik from "formik";
 import React from "react";
 import * as Mui from "@mui/material";
 import * as MuiIcons from "@mui/icons-material";
-import * as Formik from "formik";
 import { FieldLabel } from "./field-label";
 import { ImageCropper } from "../global/image-cropper";
 import { useUtils } from "../../hooks/utils/use-utils";
@@ -21,7 +21,7 @@ export const ImageField = React.memo(
   }: imageCropper.Props & Mui.CardMediaProps) => {
     const theme = Mui.useTheme();
     const maxImageLength = 4;
-    const { useDataURLFile, byteFormat } = useUtils();
+    const { useDataURLFile, byteFormat, toBase64 } = useUtils();
     const [imageSrc, setImageSrc] = React.useState<any>(null);
     const {
       setFieldValue,
@@ -30,9 +30,11 @@ export const ImageField = React.memo(
       errors,
       touched,
       isSubmitting,
-    } = Formik.useFormikContext<{ [key: string]: File[] | string[] }>();
+    } =
+      Formik.useFormikContext<{
+        [key: string]: imageCropper.customFile[];
+      }>();
     const error = Boolean(errors[name] && touched[name]);
-
     let widthAlign = React.useMemo(
       () =>
         ({ 1: 1, 2: 1, 3: 2, 4: 2 }?.[
@@ -48,57 +50,45 @@ export const ImageField = React.memo(
       [values[name]?.length]
     );
 
-    const images = React.useMemo(
-      () =>
-        enableMultiple
-          ? [...(values[name] || [])]
-          : [values[name]].filter(Boolean),
-      [values[name]]
-    );
-
-    const handleOnChange = React.useCallback(
-      async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (/(image\/*)/.test(e.target?.files?.[0]?.type || "")) {
-          if ((e.target?.files?.[0]?.size || 0) > size)
+    const handleFile = React.useCallback(
+      async (files: File[]) => {
+        if (
+          !files.map((file) => !/(image\/*)/.test(file.type)).filter(Boolean)[0]
+        ) {
+          if (!files.map((file) => file.size <= size).filter(Boolean)[0])
             setFieldError(
               name,
               `Upload limit maximum ${byteFormat(size, 0)} allowed`
             );
           else if (enableCropper && !enableMultiple)
-            setImageSrc(URL.createObjectURL(e.target?.files?.[0] as File));
+            setImageSrc(URL.createObjectURL(files[0]));
           else
             setFieldValue(
               name,
-              enableMultiple
-                ? (e.target as unknown as { files: Blob[] })?.files
-                : (e.target as unknown as { files: Blob[] })?.files?.[0]
+              await Promise.all(
+                files.map(async (file) => ({
+                  file,
+                  preview: await toBase64(file),
+                }))
+              )
             );
         } else setFieldError(name, "Only .jpg, .jpeg or .png files allowed");
       },
       [name]
     );
 
+    const handleOnChange = React.useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        handleFile([...e.target?.files]);
+      },
+      [name]
+    );
+
     const handleOnDrop = React.useCallback(
-      async (event: React.DragEvent<HTMLDivElement>) => {
+      (event: React.DragEvent<HTMLDivElement>) => {
         event.stopPropagation();
         event.preventDefault();
-        if (/(image\/*)/.test(event.dataTransfer?.files?.[0]?.type || "")) {
-          if ((event.dataTransfer?.files?.[0]?.size || 0) > size)
-            setFieldError(
-              name,
-              `Upload limit maximum ${byteFormat(size, 0)} allowed`
-            );
-          else if (enableCropper && !enableMultiple)
-            setImageSrc(URL.createObjectURL(event.dataTransfer?.files?.[0]));
-          else
-            setFieldValue(
-              name,
-              enableMultiple
-                ? (event.dataTransfer as unknown as { files: Blob[] })?.files
-                : (event.dataTransfer as unknown as { files: Blob[] })
-                    ?.files?.[0]
-            );
-        } else setFieldError(name, "Only .jpg, .jpeg or .png files allowed");
+        handleFile([...event.dataTransfer?.files]);
       },
       [name]
     );
@@ -112,11 +102,13 @@ export const ImageField = React.memo(
     );
 
     const onSave = React.useCallback(
-      (img: string) => {
-        setFieldValue(
-          name,
-          useDataURLFile(img, `Cropped-${new Date().getTime()}`)
-        );
+      async (img: string) => {
+        setFieldValue(name, [
+          {
+            ...(await useDataURLFile(img, `Cropped-${new Date().getTime()}`)),
+            preview: img,
+          },
+        ]);
         setImageSrc("");
       },
       [name]
@@ -201,7 +193,7 @@ export const ImageField = React.memo(
                 {enableAvatar && !enableMultiple ? (
                   <ShowImage
                     avatar
-                    imageSrc={images[0] as File}
+                    imageSrc={values[name][0]}
                     sx={{
                       cursor: "pointer",
                       textAlign: "center",
@@ -218,12 +210,12 @@ export const ImageField = React.memo(
                       ...sx,
                     }}
                   />
-                ) : images?.length ? (
-                  images?.slice(0, maxImageLength).map((src, index) => (
+                ) : values[name]?.length ? (
+                  values[name]?.slice(0, maxImageLength).map((src, index) => (
                     <Mui.Box sx={{ position: "relative", float: "left" }}>
                       <ShowImage
                         key={index}
-                        imageSrc={src as File}
+                        imageSrc={src}
                         sx={{
                           cursor: "pointer",
                           textAlign: "center",
@@ -319,20 +311,16 @@ const ShowImage = ({
   imageSrc,
   sx,
   avatar = false,
-}: Mui.CardMediaProps & { imageSrc: File; avatar?: boolean }) => {
-  const [image, setImage] = React.useState<string>("");
-  const { toBase64 } = useUtils();
-
-  React.useEffect(() => {
-    toBase64(imageSrc).then((res) => setImage(res as string));
-  }, [imageSrc?.name]);
-
-  return avatar ? (
+}: Mui.CardMediaProps & {
+  imageSrc: imageCropper.customFile;
+  avatar?: boolean;
+}) =>
+  avatar ? (
     <Mui.Avatar
-      src={image}
+      src={imageSrc?.preview}
       sx={{
         alignSelf: "center",
-        objectFit: image ? "cover" : "contain",
+        objectFit: imageSrc?.preview ? "cover" : "contain",
         boxShadow: `0 0 1px ${Mui.colors.grey[500]}`,
         backgroundColor: Mui.colors.grey[100],
         ...sx,
@@ -341,17 +329,16 @@ const ShowImage = ({
   ) : (
     <Mui.CardMedia
       component="img"
-      src={image}
+      src={imageSrc?.preview}
       sx={{
         alignSelf: "center",
-        objectFit: image ? "cover" : "contain",
+        objectFit: imageSrc?.preview ? "cover" : "contain",
         boxShadow: `0 0 1px ${Mui.colors.grey[500]}`,
         backgroundColor: Mui.colors.grey[100],
         ...sx,
       }}
     />
   );
-};
 
 export declare namespace imageCropper {
   export interface Props {
@@ -366,4 +353,5 @@ export declare namespace imageCropper {
     enableAvatar?: boolean;
     initialName?: string;
   }
+  export type customFile = { file: File; preview: string };
 }
