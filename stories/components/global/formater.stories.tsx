@@ -1,3 +1,4 @@
+import React from "react";
 import { ComponentStory } from "@storybook/react";
 import * as Src from "../../../src";
 
@@ -12,9 +13,9 @@ export default {
   },
 };
 
-const Template: ComponentStory<typeof Src.Components.Global.Format> = (args) => (
-  <Src.Components.Global.Format {...args} />
-);
+const Template: ComponentStory<typeof Src.Components.Global.Format> = (
+  args
+) => <Src.Components.Global.Format {...args} />;
 
 export const Number = Template.bind({});
 

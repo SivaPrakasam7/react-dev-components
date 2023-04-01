@@ -11,24 +11,23 @@ export const PreviewFile = ({
   setFileCallback,
   setErrorCallback,
 }: previewFile.props) => {
-  const acceptFileRegex = new RegExp(
-    accept.replaceAll(", ", "|").replaceAll(",", "|")
-  );
+  const acceptFileRegex = new RegExp(accept.replace(/\,\s?/g, "|"));
   const [imageSrc, setImageSrc] = React.useState<File>();
   const [image, setImage] = React.useState("");
   const { toBase64, toText, toCSVJson, byteFormat } = useUtils();
 
   const handleOnChange = React.useCallback(
     async (e: React.ChangeEvent<HTMLInputElement>) => {
-      if (acceptFileRegex.test(e.target?.files?.[0]?.type || "")) {
-        if ((e.target?.files?.[0]?.size || 0) > size)
+      const files = [...e.target?.files];
+      if (acceptFileRegex.test(files[0]?.type || "")) {
+        if ((files[0]?.size || 0) > size)
           setErrorCallback(
             `Upload limit maximum ${byteFormat(size, 2)} allowed`
           );
         else {
-          if (e.target?.files?.[0]) {
-            setImageSrc(e.target?.files?.[0]);
-            setFileCallback(e.target?.files?.[0]);
+          if (files[0]) {
+            setImageSrc(files[0]);
+            setFileCallback(files[0]);
           }
         }
       } else setErrorCallback(`Only ${accept} files allowed`);
