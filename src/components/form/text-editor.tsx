@@ -5,16 +5,18 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import * as Formik from "formik";
 import * as Mui from "@mui/material";
 import * as MuiIcons from "@mui/icons-material";
+import { FieldLabel } from "./field-label";
 
-export const RichTextEditor = ({
+export const TextEditor = ({
   name,
   label,
   toolbar,
 }: RichTextEditorProps &
   Mui.TextFieldProps & { toolbar?: object | undefined }) => {
-  const { values, errors, touched, setFieldValue } = Formik.useFormikContext<{
-    [key: string]: string;
-  }>();
+  const { values, errors, touched, setFieldValue } =
+    Formik.useFormikContext<{
+      [key: string]: string;
+    }>();
   const [editorState, setEditorState] = React.useState(() =>
     EditorState.createEmpty()
   );
@@ -39,13 +41,7 @@ export const RichTextEditor = ({
   }, [values[name]]);
 
   return (
-    <Mui.Stack spacing={1}>
-      <Mui.Typography
-        component={Mui.FormLabel}
-        color={error ? "error" : undefined}
-      >
-        {label}
-      </Mui.Typography>
+    <FieldLabel error={error} label={label}>
       <Mui.Box
         sx={{
           borderRadius: 1,
@@ -112,7 +108,7 @@ export const RichTextEditor = ({
       <Mui.FormHelperText error={error}>
         <>{error && errors[name]}</>
       </Mui.FormHelperText>
-    </Mui.Stack>
+    </FieldLabel>
   );
 };
 

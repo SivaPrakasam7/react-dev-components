@@ -29,8 +29,10 @@
     "@mui/material": "^5.11.14",
     "@mui/x-date-pickers": "^6.0.3",
     "copy-to-clipboard": "^3.3.3",
+    "date-fns": "^2.29.3",
     "draft-js": "^0.11.7",
     "formik": "^2.2.9",
+    "formik-material-ui-pickers": "^1.0.0-alpha.1",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.28",
     "numeral": "^2.0.6",
@@ -39,6 +41,7 @@
     "react-draft-wysiwyg": "^1.15.0",
     "react-easy-crop": "^4.7.4",
     "react-number-format": "^5.1.4",
+    "rollup-plugin-import-css": "^3.2.1",
     "yup": "^1.0.2"
   },
   "devDependencies": {
