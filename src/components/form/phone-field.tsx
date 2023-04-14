@@ -102,7 +102,7 @@ const MuiPhoneNumberField = ({
                     {...params}
                     variant={props.variant}
                     size={props.size}
-                    sx={{ width: 100 + (countryCode.length || 1) * 4.5 }}
+                    sx={{ width: 100 + (countryCode.length || 1) * 5 }}
                   />
                 )}
                 PaperComponent={(props) => (
