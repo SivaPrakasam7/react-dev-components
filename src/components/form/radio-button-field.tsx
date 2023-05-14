@@ -1,7 +1,7 @@
 import * as Formik from "formik";
 import * as Mui from "@mui/material";
 import React from "react";
-import * as Components from "../../components";
+import { FieldLabel } from "./field-label";
 
 export const RadioButton = (props: radioButton.Type) => (
   <Formik.Field component={MuiRadioButton} {...props} />
@@ -25,7 +25,7 @@ export const MuiRadioButton = ({
   );
 
   return (
-    <Components.Form.FieldLabel error={error} label={label}>
+    <FieldLabel error={error} label={label}>
       <Mui.Stack
         direction={direction}
         spacing={2}
@@ -58,7 +58,7 @@ export const MuiRadioButton = ({
       >
         <>{error && errors[field.name]}</>
       </Mui.FormHelperText>
-    </Components.Form.FieldLabel>
+    </FieldLabel>
   );
 };
 
